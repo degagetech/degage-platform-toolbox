@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Degage.Toolbox.ImageHelper.Properties
+namespace Degage.Toolbox.Painter.Properties
 {
 
 
