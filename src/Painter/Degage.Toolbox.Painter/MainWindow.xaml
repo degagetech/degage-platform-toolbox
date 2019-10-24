@@ -5,21 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Degage.Toolbox.Painter"
         mc:Ignorable="d"
-        Title="DEGAGE PAINTER  ( •̀ ω •́ )✧" Height="768" Width="1024" Icon="painter.ico" WindowStyle="None" AllowsTransparency="True" Opacity="0.95">
-    <Grid Margin="0,0,0,0">
+        Title="DEGAGE PAINTER  ( •̀ ω •́ )✧" 
+        Height="768" 
+        Width="1024" 
+        Icon="painter.ico" 
+        WindowStyle="None" 
+        AllowsTransparency="True" 
+        Opacity="0.95"
+        AllowDrop="True">
+    <Grid x:Name="_gridMain" Margin="0,0,0,0" DragEnter="_gridMain_DragEnter" Drop="_gridMain_Drop">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0,0">
                 <GradientStop Color="#FF89CF0F"/>
                 <GradientStop Color="#FF656161" Offset="1"/>
             </LinearGradientBrush>
         </Grid.Background>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="25*"/>
-            <ColumnDefinition Width="41*"/>
-        </Grid.ColumnDefinitions>
+
         <Label Content="DEGAGE PAINTER ( •̀ ω •́ )✧" HorizontalAlignment="Left" Margin="60,15,0,0" VerticalAlignment="Top" FontSize="14" Foreground="#FFF3F3F0"/>
         <Image x:Name="_imageLogo" HorizontalAlignment="Left" Height="35" Margin="15,15,0,0" VerticalAlignment="Top" Width="35" Source="Resources/painter.png" Stretch="Fill"/>
-        <Image x:Name="_imageSetting" HorizontalAlignment="Left" Height="25" Margin="595,730,0,0" VerticalAlignment="Top" Width="25" Source="Resources/setting.png" Stretch="Fill" Grid.Column="1"/>
+        <Image Panel.ZIndex="1" Cursor="Hand" x:Name="_imageSetting"  HorizontalAlignment="Left" Height="25" Margin="985,725,0,0" VerticalAlignment="Top" Width="25" Source="Resources/setting.png" Stretch="Fill"/>
+        <Ellipse x:Name="_elpSettingAnimation"  Grid.Column="1" Fill="#F089C325" HorizontalAlignment="Left" Height="5" Margin="995,735,0,0" Stroke="Black" VerticalAlignment="Top" Width="5" StrokeThickness="0" Opacity="0"/>
+        <WrapPanel x:Name="_wpImagePreview" HorizontalAlignment="Left" Height="120" Margin="15,75,0,0" VerticalAlignment="Top" Width="995">
+            <WrapPanel.Effect>
+                <BlurEffect RenderingBias="Quality"/>
+            </WrapPanel.Effect>
+        </WrapPanel>
 
     </Grid>
 </Window>
