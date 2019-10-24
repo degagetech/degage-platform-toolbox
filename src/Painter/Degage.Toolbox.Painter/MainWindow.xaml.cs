@@ -21,6 +21,8 @@ namespace Degage.Toolbox.Painter
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TranslateTransform _selecteBoxTransform;
+        private DoubleAnimation _aniSelectboxLeft;
 
         public MainWindow()
         {
@@ -32,7 +34,7 @@ namespace Degage.Toolbox.Painter
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             this.InitAnimation();
-
+            this.UseLayoutRounding = true;
         }
 
         private void InitAnimation()
@@ -126,6 +128,23 @@ namespace Degage.Toolbox.Painter
             #endregion
 
 
+            #region 图片选择框动画
+
+
+
+            this._aniSelectboxLeft = new DoubleAnimation();
+            this._selecteBoxTransform = new TranslateTransform();
+            CubicEase cubic = new CubicEase();
+            cubic.EasingMode = EasingMode.EaseOut;
+            this._aniSelectboxLeft.EasingFunction = cubic;
+            this._borderSelectedImage.RenderTransform = this._selecteBoxTransform;
+            this._aniSelectboxLeft.Duration = TimeSpan.FromSeconds(0.5);
+            Storyboard.SetTarget(this._aniSelectboxLeft, this._borderSelectedImage);
+
+            //this._selecteBoxTransform.BeginAnimation(TranslateTransform.XProperty, aniSelectboxLeft);
+          
+
+            #endregion
 
 
         }
@@ -146,7 +165,7 @@ namespace Degage.Toolbox.Painter
         private void _gridMain_DragEnter(Object sender, DragEventArgs e)
         {
             var data = e.Data;
-            e.Effects =DragDropEffects.None;
+            e.Effects = DragDropEffects.None;
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
                 var fileName = (data.GetData(DataFormats.FileDrop) as String[])?[0];
@@ -167,7 +186,7 @@ namespace Degage.Toolbox.Painter
                             e.Effects = DragDropEffects.Link;
                         }
                         break;
-                    default:return;
+                    default: return;
                 }
             }
 
@@ -177,19 +196,41 @@ namespace Degage.Toolbox.Painter
         {
             var data = e.Data;
             var fileName = (data.GetData(DataFormats.FileDrop) as String[])?[0];
+            this.AddImage(fileName);
+        }
+
+        private Double _imageOffset;
+        private void AddImage(String filePath)
+        {
+            if (this._borderSelectedImage.Visibility == Visibility.Hidden)
+            {
+                this._borderSelectedImage.Visibility = Visibility.Visible;
+            }
             Image image = new Image();
             image.Width = 100;
             image.Height = 100;
-            image.Stretch = Stretch.Fill;
+            image.Stretch = Stretch.Uniform;
+            image.Cursor = Cursors.Hand;
 
-            BitmapImage bitmap = new BitmapImage();
-            bitmap.BeginInit();
-          
-            bitmap.UriSource = new Uri(fileName, UriKind.Absolute);
-            bitmap.EndInit();
+            BitmapImage bitmap = new BitmapImage(new Uri(filePath, UriKind.Absolute));
+            if (bitmap.Width < image.Width && bitmap.Height < image.Height)
+            {
+                image.Stretch = Stretch.None;
+            }
+
             image.Source = bitmap;
+            image.SetValue(Canvas.LeftProperty, this._imageOffset);
 
-            this._wpImagePreview.Children.Add(image);
+            image.MouseDown += (s, e) =>
+              {
+                  var left = (Double)((Image)s).GetValue(Canvas.LeftProperty);
+                  this._aniSelectboxLeft.From = this._selecteBoxTransform.X;
+                  this._aniSelectboxLeft.To = left + this._borderCanvasContainer.Margin.Left-5;
+                  this._selecteBoxTransform.BeginAnimation(TranslateTransform.XProperty,this._aniSelectboxLeft);
+              };
+
+            this._imageOffset += image.Width + 5;
+            this._canvasImages.Children.Add(image);
         }
     }
 }
