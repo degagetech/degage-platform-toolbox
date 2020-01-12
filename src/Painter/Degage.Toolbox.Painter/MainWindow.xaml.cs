@@ -35,6 +35,7 @@ namespace Degage.Toolbox.Painter
         {
             this.InitAnimation();
             this.UseLayoutRounding = true;
+
         }
 
         private void InitAnimation()
@@ -142,7 +143,7 @@ namespace Degage.Toolbox.Painter
             Storyboard.SetTarget(this._aniSelectboxLeft, this._borderSelectedImage);
 
             //this._selecteBoxTransform.BeginAnimation(TranslateTransform.XProperty, aniSelectboxLeft);
-          
+
 
             #endregion
 
@@ -162,41 +163,64 @@ namespace Degage.Toolbox.Painter
             }
         }
 
+        private void _gridMain_DragLeave(object sender, DragEventArgs e)
+        {
+
+        }
+
         private void _gridMain_DragEnter(Object sender, DragEventArgs e)
         {
             var data = e.Data;
             e.Effects = DragDropEffects.None;
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
-                var fileName = (data.GetData(DataFormats.FileDrop) as String[])?[0];
-                if (String.IsNullOrEmpty(fileName))
+                var fileName = this.GetDragFileName(e.Data);
+                if (this.IsBitmapFile(fileName))
                 {
-                    return;
+                    e.Effects = DragDropEffects.Link;
                 }
-
-                var ext = System.IO.Path.GetExtension(fileName).ToLower().TrimStart('.');
-                switch (ext)
+                else
                 {
-                    case "jpg":
-                    case "png":
-                    case "bmp":
-                    case "ico":
-                    case "jpeg":
-                        {
-                            e.Effects = DragDropEffects.Link;
-                        }
-                        break;
-                    default: return;
+                    e.Effects = DragDropEffects.None;
                 }
             }
 
         }
+        private String GetDragFileName(IDataObject dataObject)
+        {
+            var fileName = (dataObject.GetData(DataFormats.FileDrop) as String[])?[0];
+            return fileName;
+        }
 
+        private Boolean IsBitmapFile(String fileName)
+        {
+            if (String.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            var ext = System.IO.Path.GetExtension(fileName).ToLower().TrimStart('.');
+            switch (ext)
+            {
+                case "jpg":
+                case "png":
+                case "bmp":
+                case "ico":
+                case "jpeg":
+                    {
+                        return true;
+                    };
+                default: return false;
+            }
+        }
         private void _gridMain_Drop(object sender, DragEventArgs e)
         {
-            var data = e.Data;
-            var fileName = (data.GetData(DataFormats.FileDrop) as String[])?[0];
-            this.AddImage(fileName);
+            var fileName = this.GetDragFileName(e.Data);
+
+            if (this.IsBitmapFile(fileName))
+            {
+                this.AddImage(fileName);
+            }
         }
 
         private Double _imageOffset;
@@ -206,31 +230,29 @@ namespace Degage.Toolbox.Painter
             {
                 this._borderSelectedImage.Visibility = Visibility.Visible;
             }
-            Image image = new Image();
-            image.Width = 100;
-            image.Height = 100;
-            image.Stretch = Stretch.Uniform;
-            image.Cursor = Cursors.Hand;
+            ImageWindow window = new ImageWindow();
+            window.Width = 100;
+            window.Height = 100;
+            window.Cursor = Cursors.Hand;
 
-            BitmapImage bitmap = new BitmapImage(new Uri(filePath, UriKind.Absolute));
-            if (bitmap.Width < image.Width && bitmap.Height < image.Height)
-            {
-                image.Stretch = Stretch.None;
-            }
 
-            image.Source = bitmap;
-            image.SetValue(Canvas.LeftProperty, this._imageOffset);
+            window.SetImage(filePath);
+            window.SetValue(Canvas.LeftProperty, this._imageOffset);
 
-            image.MouseDown += (s, e) =>
+            window.MouseDown += (s, e) =>
               {
-                  var left = (Double)((Image)s).GetValue(Canvas.LeftProperty);
+                  var left = (Double)((Control)s).GetValue(Canvas.LeftProperty);
                   this._aniSelectboxLeft.From = this._selecteBoxTransform.X;
-                  this._aniSelectboxLeft.To = left + this._borderCanvasContainer.Margin.Left-5;
-                  this._selecteBoxTransform.BeginAnimation(TranslateTransform.XProperty,this._aniSelectboxLeft);
+                  this._aniSelectboxLeft.To = left + this._borderCanvasContainer.Margin.Left - 10;
+                  this._selecteBoxTransform.BeginAnimation(TranslateTransform.XProperty, this._aniSelectboxLeft);
               };
+            window.ToolTip = filePath;
+            this._imageOffset += window.Width + 5;
+            this._canvasImages.Children.Add(window);
 
-            this._imageOffset += image.Width + 5;
-            this._canvasImages.Children.Add(image);
         }
+
+
+
     }
 }
