@@ -167,16 +167,23 @@ namespace Degage.Toolbox.Painter
         {
 
         }
-
+        /// <summary>
+        /// 标识最近一次拖放操作是否为有效的图像拖放操作
+        /// </summary>
+        private Boolean _isValidImageFileDrag;
+        private List<String> _dragImageFileNames = null;
         private void _gridMain_DragEnter(Object sender, DragEventArgs e)
         {
             var data = e.Data;
             e.Effects = DragDropEffects.None;
+            _isValidImageFileDrag = true;
+            _dragImageFileNames = null;
             if (data.GetDataPresent(DataFormats.FileDrop))
             {
-                var fileName = this.GetDragFileName(e.Data);
-                if (this.IsBitmapFile(fileName))
+                _dragImageFileNames = this.GetDragImageFileNames(e.Data);
+                if (_dragImageFileNames.Count>0)
                 {
+                    _isValidImageFileDrag = true;
                     e.Effects = DragDropEffects.Link;
                 }
                 else
@@ -186,10 +193,22 @@ namespace Degage.Toolbox.Painter
             }
 
         }
-        private String GetDragFileName(IDataObject dataObject)
+        private List<String> GetDragImageFileNames(IDataObject dataObject)
         {
-            var fileName = (dataObject.GetData(DataFormats.FileDrop) as String[])?[0];
-            return fileName;
+            var fileNames =(dataObject.GetData(DataFormats.FileDrop)) as String[];
+            var result = new List<String>();
+            if (fileNames != null && fileNames.Length > 0)
+            {
+                foreach (var name in fileNames)
+                {
+                    if (this.IsBitmapFile(name))
+                    {
+                        result.Add(name);
+                    }
+                }
+            }
+    
+            return result;
         }
 
         private Boolean IsBitmapFile(String fileName)
@@ -215,11 +234,12 @@ namespace Degage.Toolbox.Painter
         }
         private void _gridMain_Drop(object sender, DragEventArgs e)
         {
-            var fileName = this.GetDragFileName(e.Data);
-
-            if (this.IsBitmapFile(fileName))
+            if (this._isValidImageFileDrag)
             {
-                this.AddImage(fileName);
+                foreach (var fileName in this._dragImageFileNames)
+                {
+                    this.AddImage(fileName);
+                }
             }
         }
 
@@ -241,10 +261,12 @@ namespace Degage.Toolbox.Painter
 
             window.MouseDown += (s, e) =>
               {
-                  var left = (Double)((Control)s).GetValue(Canvas.LeftProperty);
+                  var ctl = (Control)s;
+                  var left = (Double)(ctl.GetValue(Canvas.LeftProperty));
                   this._aniSelectboxLeft.From = this._selecteBoxTransform.X;
                   this._aniSelectboxLeft.To = left + this._borderCanvasContainer.Margin.Left - 10;
                   this._selecteBoxTransform.BeginAnimation(TranslateTransform.XProperty, this._aniSelectboxLeft);
+                  ctl.Focus();
               };
             window.ToolTip = filePath;
             this._imageOffset += window.Width + 5;

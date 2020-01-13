@@ -23,6 +23,20 @@ namespace Degage.Toolbox.Painter
         public ImageWindow()
         {
             InitializeComponent();
+           _btnClose.Visibility =  Visibility.Hidden;
+            this.GotFocus += ImageWindow_GotFocus;
+            this.LostFocus += ImageWindow_LostFocus;
+            this.Focusable = true;
+        }
+
+        private void ImageWindow_GotFocus(object sender, RoutedEventArgs e)
+        {
+            _btnClose.Visibility = Visibility.Visible;
+        }
+
+        private void ImageWindow_LostFocus(object sender, RoutedEventArgs e)
+        {
+           _btnClose.Visibility = Visibility.Hidden;
         }
 
         public void SetImage(String filePath)
