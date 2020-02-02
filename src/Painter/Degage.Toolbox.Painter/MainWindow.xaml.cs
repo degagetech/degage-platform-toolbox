@@ -226,6 +226,7 @@ namespace Degage.Toolbox.Painter
                 case "bmp":
                 case "ico":
                 case "jpeg":
+                case "gif":
                     {
                         return true;
                     };
