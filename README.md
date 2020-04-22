@@ -19,11 +19,11 @@
 
 - ##### [工作绩效编辑器](docs/work-performance-editor/description.md "查看对于此工具的详细描述") (WorkPerformanceEditor)      OS：Windows![windows](docs/windows.png)   #####
 
-​       用于编写公司每月需要上交的绩效考核文件（PS：太懒，写个工具复制粘贴发送），提供扩展机制以适应不同格式的绩效模板，并连接指定的邮件服务器，筛选与发送绩效相关的邮件信息。
+​       这是一个工作绩效文档编写工具，提供扩展机制以适应不同格式的绩效模板，并连接指定的邮件服务器，筛选与发送绩效相关的邮件信息。
 
 
 
-- ##### [画家](doc "查看对于此工具的详细描述") (WorkPerformanceEditor)      OS：Windows![windows](docs/windows.png)
+- ##### [画家](doc "查看对于此工具的详细描述") (Painter)      OS：Windows![windows](docs/windows.png)
 
    提供对于各类图像的转换、处理、简易的绘制。
 
