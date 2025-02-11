@@ -15,13 +15,6 @@
 
   这是一个用于选择屏幕上像素颜色，并且预置一些好看的颜色的选项工具，我希望通过此工具辅助我的颜色搭配设计工作。
 
-  
-
-- ##### [工作绩效编辑器](docs/work-performance-editor/description.md "查看对于此工具的详细描述") (WorkPerformanceEditor)      OS：Windows![windows](docs/windows.png)   #####
-
-​       这是一个工作绩效文档编写工具，提供扩展机制以适应不同格式的绩效模板，并连接指定的邮件服务器，筛选与发送绩效相关的邮件信息。
-
-
 
 - ##### [画家](doc "查看对于此工具的详细描述") (Painter)      OS：Windows![windows](docs/windows.png)
 
